@@ -80,6 +80,7 @@ export class GameController implements SceneHost {
 
   startDemo(style: GameStyle): void {
     this.teardownPlay();
+    document.body.classList.remove('in-game');
     this.mode = 'demo';
     this.demoIndex = (this.demoIndex + 1) % DEMO_LEVELS.length;
     const level = getLevel(style, DEMO_LEVELS[this.demoIndex] ?? 7, PROGRESSION_SEED);
@@ -93,6 +94,7 @@ export class GameController implements SceneHost {
 
   startSession(session: GameSession, startPaused: boolean): void {
     this.teardownPlay();
+    document.body.classList.add('in-game');
     this.mode = 'game';
     this.session = session;
     session.setPaddleResponse(this.paddleResponse());
@@ -107,6 +109,7 @@ export class GameController implements SceneHost {
 
   startTutorial(): void {
     this.teardownPlay();
+    document.body.classList.add('in-game');
     this.mode = 'tutorial';
     this.createHud();
     this.tutorial = new TutorialDirector(

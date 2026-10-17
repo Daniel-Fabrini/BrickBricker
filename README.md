@@ -66,6 +66,14 @@ npm run android:release                # ./gradlew bundleRelease (configure sign
 For a store release add a signing config (keystore) to `android/app/build.gradle` or sign the AAB
 in Android Studio (*Build → Generate Signed App Bundle*). Keystores are git-ignored.
 
+Verified in this repository's CI-like environment (JDK 21, SDK platform 36, build-tools 36.0.0,
+Gradle 8.14.3 wrapper, AGP 8.13): `./gradlew assembleDebug` produces a ~4.9 MB `app-debug.apk`
+(`com.brickbreaker.infinite`, versionName 1.0.0, minSdk 24, targetSdk 36, portrait).
+
+Troubleshooting: if Gradle fails with HTTP 429 from `repo.maven.apache.org`, retry, or add a
+user-level init script (`~/.gradle/init.d/mirror.gradle`) that prepends Google's Maven Central
+mirror `https://maven-central.storage-download.googleapis.com/maven2/` to the repositories.
+
 Min SDK 24 (Android 7.0), target/compile SDK 36. The status bar is hidden during play; Capacitor's
 `SystemBars` plugin injects `--safe-area-inset-*` CSS variables so the layout avoids display
 cutouts and the navigation bar on edge-to-edge devices.
@@ -284,7 +292,7 @@ such a URL. `?seed=N` fixes the High Score seed.
 
 ## Tests
 
-`npm test` runs 80+ Vitest tests (in `tests/`), including all required areas:
+`npm test` runs 82 Vitest tests (in `tests/`), including all required areas:
 
 | # | Requirement | File |
 | --- | --- | --- |
@@ -297,6 +305,7 @@ such a URL. `?seed=N` fixes the High Score seed.
 | 23 | complete localisation, placeholders, language detection | `i18n.test.ts` |
 | 24, 26 | theme independence, rewards grant no advantage | `meta-theme.test.ts` |
 | 25 | generated/special level validation, determinism, gradual difficulty, bot completion | `levels.test.ts` |
+| – | simulation budget with the maximum 8 balls on a dense level | `performance.test.ts` |
 
 `npm run test:e2e` (Playwright, Pixel 7 emulation) covers the main menu and onboarding, starting both
 modes, Classic/Maze and Retro/Neon switching with persistence, swipe control, pausing (including
@@ -310,8 +319,10 @@ stats/achievements/collection/settings screens, and the tutorial.
   no recorded audio assets.
 - Physics uses discrete sub-stepped collision with corner heuristics; it is robust in testing but is
   not a general-purpose physics engine.
-- Real-device testing (performance on low-end phones, haptics, cutout handling in immersive mode)
-  could not be performed in this environment; the APK was built but not run on hardware.
+- Real-device testing (performance on low-end phones, haptics, cutout handling, Android lifecycle
+  events) could not be performed in this environment: the debug APK was built and inspected, but it
+  was not run on a phone or emulator (no hardware virtualisation available). The web build was
+  exercised in headless Chromium with Pixel 7 and 360×640 emulation.
 - The release build is unsigned until you add your own keystore.
 - `npm audit` reports a moderate advisory in a transitive dependency of the Capacitor *CLI* (`uuid`
   via the iOS `xcode` package). It is a development tool only and is not part of the shipped app.

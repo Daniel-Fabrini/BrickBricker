@@ -34,6 +34,8 @@ export class UIManager {
   private readonly toastLayer: HTMLElement;
   private page: View | null = null;
   private modals: View[] = [];
+  private toastQueue: { title: string; detail?: string; kind: 'info' | 'reward' | 'warn' }[] = [];
+  private toastShowing = false;
 
   constructor(root: HTMLElement) {
     this.root = root;
@@ -110,14 +112,34 @@ export class UIManager {
     for (const m of this.modals) m.render();
   }
 
+  /** Non-blocking notification. Toasts are queued and shown one at a time. */
   toast(title: string, detail?: string, kind: 'info' | 'reward' | 'warn' = 'info'): void {
-    const el = h('div', { class: `toast toast-${kind}` }, h('div', { class: 'toast-title', text: title }), detail ? h('div', { class: 'toast-detail', text: detail }) : null);
+    this.toastQueue.push({ title, detail, kind });
+    if (this.toastQueue.length > 6) this.toastQueue.shift();
+    if (!this.toastShowing) this.nextToast();
+  }
+
+  private nextToast(): void {
+    const next = this.toastQueue.shift();
+    if (!next) {
+      this.toastShowing = false;
+      return;
+    }
+    this.toastShowing = true;
+    const el = h(
+      'div',
+      { class: `toast toast-${next.kind}` },
+      h('div', { class: 'toast-title', text: next.title }),
+      next.detail ? h('div', { class: 'toast-detail', text: next.detail }) : null,
+    );
     this.toastLayer.append(el);
-    while (this.toastLayer.children.length > 3) this.toastLayer.firstElementChild?.remove();
     requestAnimationFrame(() => el.classList.add('show'));
     window.setTimeout(() => {
       el.classList.remove('show');
-      window.setTimeout(() => el.remove(), 300);
-    }, 2800);
+      window.setTimeout(() => {
+        el.remove();
+        this.nextToast();
+      }, 260);
+    }, 2300);
   }
 }

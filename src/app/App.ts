@@ -78,6 +78,10 @@ export class App implements ControllerHost {
         this.relayout();
       },
       onBack: () => this.handleBack(),
+      beforeExit: () => {
+        this.controller.saveNow();
+        return this.saves.flush();
+      },
     });
     const unlock = (): void => {
       this.audio.unlock();

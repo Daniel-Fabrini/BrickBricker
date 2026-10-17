@@ -1,3 +1,4 @@
+import { recordCheckpoint } from '../game/profile';
 import type { App } from './App';
 
 /**
@@ -14,6 +15,7 @@ export interface TestHooks {
   autopilot(on: boolean): void;
   flush(): Promise<void>;
   loseAllBalls(): void;
+  unlockCheckpoint(style: 'classic' | 'maze', level: number): void;
 }
 
 declare global {
@@ -40,6 +42,10 @@ export function installTestHooks(app: App): void {
       const s = sim();
       if (!s) return;
       s.state.balls.forEach((_, i) => s.debugPlaceBall(180, 640, 0, 300, i));
+    },
+    unlockCheckpoint: (style, level) => {
+      recordCheckpoint(app.data.profile, style, { level, inventory: [null, null], score: 0 });
+      app.persist();
     },
   };
 }

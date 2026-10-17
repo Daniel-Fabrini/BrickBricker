@@ -8,6 +8,8 @@ export interface LifecycleHandlers {
   onForeground(): void;
   /** Android back button / gesture. Return true if handled. */
   onBack(): boolean;
+  /** Called before the app exits from the root screen (flush pending saves). */
+  beforeExit(): Promise<void>;
 }
 
 /**
@@ -42,7 +44,12 @@ export function initLifecycle(handlers: LifecycleHandlers): void {
     void App.addListener('pause', goBackground);
     void App.addListener('resume', goForeground);
     void App.addListener('backButton', () => {
-      if (!handlers.onBack()) void App.exitApp();
+      if (!handlers.onBack()) {
+        void handlers
+          .beforeExit()
+          .catch(() => undefined)
+          .finally(() => void App.exitApp());
+      }
     });
     // Immersive play: hide the status bar; the navigation bar stays available.
     void SystemBars.hide({ bar: SystemBarType.StatusBar }).catch(() => undefined);
