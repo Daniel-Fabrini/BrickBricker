@@ -292,7 +292,7 @@ such a URL. `?seed=N` fixes the High Score seed.
 
 ## Tests
 
-`npm test` runs 82 Vitest tests (in `tests/`), including all required areas:
+`npm test` runs 83 Vitest tests (in `tests/`), including all required areas:
 
 | # | Requirement | File |
 | --- | --- | --- |
@@ -306,6 +306,7 @@ such a URL. `?seed=N` fixes the High Score seed.
 | 24, 26 | theme independence, rewards grant no advantage | `meta-theme.test.ts` |
 | 25 | generated/special level validation, determinism, gradual difficulty, bot completion | `levels.test.ts` |
 | – | simulation budget with the maximum 8 balls on a dense level | `performance.test.ts` |
+| – | interactive tutorial plays through every step | `tutorial.test.ts` |
 
 `npm run test:e2e` (Playwright, Pixel 7 emulation) covers the main menu and onboarding, starting both
 modes, Classic/Maze and Retro/Neon switching with persistence, swipe control, pausing (including
