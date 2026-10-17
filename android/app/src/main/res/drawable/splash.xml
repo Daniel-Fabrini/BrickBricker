@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Native launch screen: dark background, centred logo and the author credit near the bottom.
+     Bitmaps are centred (never stretched), so the layout holds on every aspect ratio. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/bbi_background" />
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/splash_logo" />
+    </item>
+    <item android:bottom="56dp">
+        <bitmap
+            android:gravity="bottom|center_horizontal"
+            android:src="@drawable/splash_credit" />
+    </item>
+</layer-list>

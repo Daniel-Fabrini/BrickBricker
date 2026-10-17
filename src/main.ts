@@ -4,6 +4,7 @@ import '@fontsource/orbitron/latin-700.css';
 import '@fontsource/orbitron/latin-900.css';
 import './styles/main.css';
 import { App } from './app/App';
+import { showSplashError } from './app/splash';
 
 async function boot(): Promise<void> {
   const gameRoot = document.getElementById('game');
@@ -15,9 +16,5 @@ async function boot(): Promise<void> {
 
 boot().catch((err: unknown) => {
   console.error('[boot] failed', err);
-  const boot = document.getElementById('boot');
-  if (boot) {
-    boot.textContent = 'Something went wrong while starting the game. Please restart the app.';
-    boot.classList.add('error');
-  }
+  showSplashError('Something went wrong while starting the game. Please restart the app.');
 });

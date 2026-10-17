@@ -23,6 +23,7 @@ import { SettingsScreen } from '../ui/screens/SettingsScreen';
 import { StatsScreen } from '../ui/screens/StatsScreen';
 import { UIManager, type View } from '../ui/UIManager';
 import { GameController, type ControllerHost } from './GameController';
+import { hideSplash } from './splash';
 import { installTestHooks } from './testHooks';
 
 /** Application shell: boot, persistence, navigation, settings and wiring of all subsystems. */
@@ -99,7 +100,7 @@ export class App implements ControllerHost {
     if (!this.data.profile.onboarded) this.ui.openModal(new OnboardingDialog(this));
     this.persist();
     installTestHooks(this);
-    document.body.classList.add('ready');
+    void hideSplash();
   }
 
   // ------------------------------------------------------------------ boot helpers
@@ -167,6 +168,12 @@ export class App implements ControllerHost {
 
   private applyTheme(): void {
     document.body.dataset.theme = this.data.settings.theme;
+    try {
+      // Lets index.html style the splash screen with the right theme on the next launch.
+      window.localStorage.setItem('bbi.theme', this.data.settings.theme);
+    } catch {
+      // Optional hint only.
+    }
     this.audio.setTheme(this.data.settings.theme);
     this.cache.clear();
   }

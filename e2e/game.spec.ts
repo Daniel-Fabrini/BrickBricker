@@ -23,6 +23,16 @@ async function waitForPhase(page: Page, phase: string): Promise<void> {
 }
 
 test.describe('Brick Breaker Infinite', () => {
+  test('shows the splash screen with the author credit before the menu', async ({ page }) => {
+    await page.goto('/?test=1', { waitUntil: 'domcontentloaded' });
+    const splash = page.getByTestId('splash');
+    await expect(splash).toBeVisible();
+    await expect(splash).toContainText('Brick Breaker');
+    await expect(splash).toContainText('by Daniel Aleixo');
+    await expect(splash).toHaveCount(0, { timeout: 10_000 });
+    await expect(page.getByTestId('onboarding')).toBeVisible();
+  });
+
   test('shows the main menu with both modes after skipping onboarding', async ({ page }) => {
     await freshStart(page);
     await expect(page.getByTestId('mode-highscore')).toBeVisible();

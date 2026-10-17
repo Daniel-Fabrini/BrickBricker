@@ -10,11 +10,35 @@
     <title>Brick Breaker Infinite</title>
   </head>
   <body data-theme="neon">
+    <script>
+      // Use the last chosen theme for the splash screen before the game code loads.
+      try {
+        var savedTheme = localStorage.getItem('bbi.theme');
+        if (savedTheme === 'retro' || savedTheme === 'neon') document.body.setAttribute('data-theme', savedTheme);
+      } catch (e) {}
+    </script>
     <div id="app">
       <div id="bg" aria-hidden="true"></div>
       <div id="game" aria-label="Playfield"></div>
       <div id="ui"></div>
-      <div id="boot" aria-hidden="true"><div class="boot-spinner"></div></div>
+      <div id="boot" role="img" aria-label="Brick Breaker Infinite, by Daniel Aleixo" data-testid="splash">
+        <div class="splash">
+          <svg class="splash-mark" viewBox="0 0 64 64" aria-hidden="true">
+            <rect class="splash-brick b1" x="8" y="10" width="14" height="7" rx="1.5" />
+            <rect class="splash-brick b2" x="25" y="10" width="14" height="7" rx="1.5" />
+            <rect class="splash-brick b3" x="42" y="10" width="14" height="7" rx="1.5" />
+            <rect class="splash-brick b4" x="16" y="20" width="14" height="7" rx="1.5" />
+            <rect class="splash-brick b5" x="34" y="20" width="14" height="7" rx="1.5" />
+            <circle class="splash-ball" cx="38" cy="40" r="4" />
+            <rect class="splash-paddle" x="18" y="51" width="28" height="5" rx="2.5" />
+          </svg>
+          <div class="splash-title">Brick Breaker</div>
+          <div class="splash-sub">Infinite</div>
+          <div class="splash-loader" aria-hidden="true"><span></span></div>
+          <p class="splash-status" aria-live="polite"></p>
+        </div>
+        <div class="splash-credit">by <strong>Daniel Aleixo</strong></div>
+      </div>
     </div>
     <noscript>Brick Breaker Infinite needs JavaScript.</noscript>
     <script type="module" src="/src/main.ts"></script>
